@@ -46,16 +46,18 @@ def get_save_data(vertica, query_delete_old_data, query_insert_data, date):
      with vertica as conn:
         with conn.cursor() as cur:
             cur.execute(query_delete_old_data.format(date))
+            print(query_insert_data.format(date))
             cur.execute(query_insert_data.format(date))
+            conn.commit()
 
-dag = DAG('stg', 
+dag = DAG('dwh', 
         description='delete old and save new mart', 
         schedule_interval='0 1 * * *',
         start_date=pendulum.parse('2022-10-01'), 
         end_date=pendulum.parse('2022-10-31'),
         catchup=True)
 
-etl_dwh = PythonOperator(task_id='etl_transactions', 
+etl_dwh = PythonOperator(task_id='dwh', 
                             python_callable=get_save_data, 
                             op_kwargs={
                                 'vertica': vertica,

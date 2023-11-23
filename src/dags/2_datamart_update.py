@@ -105,7 +105,6 @@ dag = DAG('stg',
         end_date=pendulum.parse('2022-10-31'),
         catchup=True)
 
-dummy_operator = DummyOperator(task_id='dummy_task', retries = 3, dag=dag)
 
 etl_transactions = PythonOperator(task_id='etl_transactions', 
                             python_callable=etl_transaction, 
@@ -132,5 +131,5 @@ etl_currencies = PythonOperator(task_id='etl_currencies',
                             dag=dag)
 
 
-etl_transactions >> etl_currencies
+[etl_transactions, etl_currencies]
 
